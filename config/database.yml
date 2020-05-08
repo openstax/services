@@ -9,6 +9,7 @@ development:
   database: <%= ENV['OXA_DEV_DB'] || 'ox_accounts_dev' %>
 
 production:
+  database: <%= ENV['OXA_DB_NAME'] || 'ox_accounts_prod' %>
   <<: *default
 
 # Warning: The database defined as "test" will be erased and

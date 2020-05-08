@@ -5,8 +5,8 @@ class SsoCookieJar < ActionDispatch::Cookies::AbstractCookieJar
     super
 
     secrets = Rails.application.secrets.sso
-    @signature_private_key = OpenSSL::PKey::RSA.new secrets[:signature_private_key]
-    @signature_public_key = OpenSSL::PKey::RSA.new secrets[:signature_public_key]
+    @signature_private_key = OpenSSL::PKey::RSA.new ENV['SSO_PRIV_KEY'] || secrets[:signature_private_key]
+    @signature_public_key = OpenSSL::PKey::RSA.new ENV['SSO_PUB_KEY'] || secrets[:signature_public_key]
     @signature_algorithm = secrets[:signature_algorithm].to_sym
 
     @encryption_private_key = OpenSSL::PKey::RSA.new(secrets[:encryption_private_key]) \
