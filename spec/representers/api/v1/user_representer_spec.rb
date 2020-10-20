@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::UserRepresenter, type: :representer do
+
   let(:user)            { FactoryBot.create :user  }
   subject(:representer) { described_class.new(user) }
 
@@ -120,4 +121,21 @@ RSpec.describe Api::V1::UserRepresenter, type: :representer do
       expect { representer.from_hash(hash) }.not_to change { user.reload.grant_tutor_access }
     end
   end
+
+  context 'applications' do
+    let!(:application_user) { FactoryBot.create(:application_user, user: user, application: application) }
+    let!(:sso_application_user) { FactoryBot.create(:sso_application_user, user: user, sso_application: sso_application) }
+    let!(:application) { FactoryBot.create(:doorkeeper_application) }
+    let!(:sso_application) { FactoryBot.create(:sso_application) }
+
+    it 'includes OAuth and SSO applications' do
+      expect(representer.to_hash['applications']).to contain_exactly(
+        *[
+          { id: application.id, name: application.name }.with_indifferent_access,
+          {id: sso_application.id, name: sso_application.name}.with_indifferent_access
+        ]
+      )
+    end
+  end
+
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_14_190321) do
+ActiveRecord::Schema.define(version: 2020_10_16_174153) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
@@ -313,6 +313,20 @@ ActiveRecord::Schema.define(version: 2020_08_14_190321) do
     t.string "first_name"
     t.string "last_name"
     t.string "organization_name"
+  end
+
+  create_table "sso_application_users", force: :cascade do |t|
+    t.integer "sso_application_id"
+    t.integer "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "sso_applications", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_sso_applications_on_name"
   end
 
   create_table "user_external_uuids", id: :serial, force: :cascade do |t|

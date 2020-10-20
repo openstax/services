@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :doorkeeper_application, :class => Doorkeeper::Application do
-    sequence(:name){ |n| "Application #{n}" }
+    sequence(:name){ |n| "OAuth/Doorkeeper Application #{n}" }
     redirect_uri { "https://app.com/callback" }
     association :owner, factory: :group
     email_from_address { 'app@app.com' }

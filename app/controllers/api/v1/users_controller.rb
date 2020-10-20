@@ -1,4 +1,5 @@
 class Api::V1::UsersController < Api::V1::ApiController
+  before_action :track_app_usage, only: :show
 
   resource_description do
     api_versions "v1"
@@ -181,6 +182,15 @@ class Api::V1::UsersController < Api::V1::ApiController
       render json: { errors: result.errors }, status: :conflict
     else
       respond_with result.outputs[:user], represent_with: Api::V1::FindOrCreateUserRepresenter, location: nil
+    end
+  end
+
+  private
+
+  def track_app_usage
+    if params[:app].present?
+      app = SsoApplication.find_by(name: params[:app])
+      SsoApplicationUser.find_or_create_by!(sso_application_id: app.id, user_id: current_human_user.id) if app
     end
   end
 

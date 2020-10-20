@@ -136,6 +136,8 @@ class User < ActiveRecord::Base
   has_many :authentications, dependent: :destroy, inverse_of: :user
   has_many :application_users, dependent: :destroy, inverse_of: :user
   has_many :applications, through: :application_users
+  has_many :sso_application_users, dependent: :destroy, inverse_of: :user
+  has_many :sso_applications, through: :sso_application_users
   has_many :contact_infos, dependent: :destroy, inverse_of: :user
   has_many :email_addresses, inverse_of: :user
   has_many :message_recipients, inverse_of: :user, dependent: :destroy
@@ -154,6 +156,10 @@ class User < ActiveRecord::Base
   attr_readonly :uuid, :support_identifier
 
   attribute :is_not_gdpr_location, :boolean, default: nil
+
+  def all_applications
+    applications + sso_applications
+  end
 
   def most_accurate_school_name
     return sheerid_reported_school if sheerid_reported_school.present?

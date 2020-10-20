@@ -202,6 +202,20 @@ RSpec.describe Api::V1::UsersController, type: :controller, api: true, version: 
       )
     end
 
+    context 'track SSO application usage' do
+      before { FactoryBot.create(:sso_application, name: app_name) }
+
+      let(:app_name) { 'osweb' }
+
+      it 'stores the SSO app that the user is using' do
+        expect {
+          api_get :show, user_2_token, params: { app: app_name }
+        }.to change(SsoApplicationUser, :count).by(1)
+
+        expect(user_2.applications).to eq([SsoApplication.last])
+      end
+    end
+
     context "gdpr location" do
       let(:is_not_gdpr_location) { true }
 
