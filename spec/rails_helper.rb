@@ -30,19 +30,25 @@ end
 """
   Config for Capybara
 """
+Capybara.server = :webrick
+require 'selenium/webdriver'
+# https://robots.thoughtbot.com/headless-feature-specs-with-chrome
+Capybara.register_driver :selenium_chrome do |app|
+  options = Selenium::WebDriver::Chrome::Options.new args: [ '--lang=en' ]
+  Capybara::Selenium::Driver.new app, browser: :chrome, options: options
+end
+# no-sandbox is required for it to work with Docker (Travis)
+Capybara.register_driver :selenium_chrome_headless do |app|
+  options = Selenium::WebDriver::Chrome::Options.new args: [
+      'headless', 'no-sandbox', 'disable-dev-shm-usage', 'lang=en'
+  ]
+  Capybara::Selenium::Driver.new app, browser: :chrome, options: options
+end
+Capybara.javascript_driver = :selenium_chrome_headless
+
 # https://robots.thoughtbot.com/headless-feature-specs-with-chrome
 Capybara.register_driver :selenium_chrome do |app|
   options = Selenium::WebDriver::Chrome::Options.new args: [ 'lang=en' ]
-
-  Capybara::Selenium::Driver.new app, browser: :chrome, options: options
-end
-
-# no-sandbox and disable-gpu are required for Chrome to work with Travis
-Capybara.register_driver :selenium_chrome_headless do |app|
-  options = Selenium::WebDriver::Chrome::Options.new args: [
-    'no-sandbox', 'headless', 'disable-dev-shm-usage',
-    'disable-gpu', 'disable-extensions', 'disable-infobars'
-  ]
 
   Capybara::Selenium::Driver.new app, browser: :chrome, options: options
 end
@@ -155,4 +161,21 @@ def disable_sfdc_client
   allow(ActiveForce)
     .to receive(:sfdc_client)
     .and_return(double('null object').as_null_object)
+end
+
+# Download and cache the webdriver now so it doesn't interfere with VCR later
+# Use a lockfile so we don't get errors due to downloading it multiple times concurrently
+File.open('.webdrivers_update', File::RDWR|File::CREAT, 0640) do |file|
+  file.flock File::LOCK_EX
+  update_time = Time.parse(file.read) rescue nil
+  current_time = Time.current
+  if update_time.nil? || current_time - update_time > 5.minutes
+    Webdrivers::Chromedriver.update
+    file.rewind
+    file.write current_time.iso8601
+    file.flush
+    file.truncate file.pos
+  end
+ensure
+  file.flock File::LOCK_UN
 end

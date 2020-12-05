@@ -51,3 +51,6 @@ brakeman.html
 dump.rdb
 
 .idea
+
+# Ignore webdrivers lock file
+.webdrivers_update
