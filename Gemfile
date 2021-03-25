@@ -276,4 +276,7 @@ group :production do
 
   # Consistent logging
   gem 'lograge'
+
+  # Pinning mimemagic
+  gem 'mimemagic', '0.3.6'
 end
