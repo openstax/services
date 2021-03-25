@@ -21,7 +21,7 @@ gem install --conservative bundler -v $BUNDLER_VERSION
 echo Installing gems
 # After install do an rbenv rehash to make sure newly installed executables
 # have shims available
-bundle install --without development test
+bundle install
 rbenv rehash
 
 RAILS_ENV=production bundle exec rake assets:precompile
