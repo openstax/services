@@ -278,5 +278,5 @@ group :production do
   gem 'lograge'
 
   # Pinning mimemagic
-  gem 'mimemagic', '0.3.6'
+  gem 'mimemagic', '0.3.7'
 end
