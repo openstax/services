@@ -279,4 +279,5 @@ group :production do
 
   # Pinning mimemagic
   gem 'mimemagic', '0.3.7'
+  gem 'nokogiri', '~> 1.11.2'
 end
