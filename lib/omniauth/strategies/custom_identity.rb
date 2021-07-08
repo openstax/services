@@ -125,7 +125,6 @@ module OmniAuth
             if Rails.logger && log_warning_on_csrf_failure
 
           handle_unverified_request
-          Legacy::SessionsController.action(:start).call(env)
         else
           @handler_result =
             SignupPassword.handle(
@@ -147,7 +146,6 @@ module OmniAuth
       end
 
       def show_signup_password_form
-        Legacy::SignupController.action(:password).call(env)
       end
 
       def signup_path
